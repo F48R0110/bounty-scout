@@ -116,3 +116,13 @@ export function countClaims(comments: GhComment[]): number {
 export function daysBetween(a: string | Date, b: string | Date = new Date()): number {
   return Math.abs(new Date(b).getTime() - new Date(a).getTime()) / 86_400_000;
 }
+
+/** Links to program rules (terms, ToS, bounty or contributor docs) inside the issue text. */
+export function linkedRuleDocs(text: string): { repo: string; path: string }[] {
+  const out = new Map<string, { repo: string; path: string }>();
+  const re = /github\.com\/([\w.-]+\/[\w.-]+)\/blob\/[^/\s]+\/([^\s)#?"'\]]+\.md)/gi;
+  for (const m of text.matchAll(re)) {
+    if (/term|tos|bount|contributor|eligib/i.test(m[2])) out.set(`${m[1]}:${m[2]}`, { repo: m[1], path: m[2] });
+  }
+  return [...out.values()].slice(0, 2);
+}

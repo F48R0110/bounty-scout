@@ -1,6 +1,6 @@
 import type { Bounty, Config, GhIssue } from "./types.js";
 import { GitHubClient, mapLimit, repoFromApiUrl } from "./github.js";
-import { countAttempts, countClaims, eligibilitySignals, parseAmount, scamSignals } from "./parse.js";
+import { countAttempts, countClaims, eligibilitySignals, linkedRuleDocs, parseAmount, scamSignals } from "./parse.js";
 
 export interface ScanOptions {
   log?: (msg: string) => void;
@@ -49,6 +49,9 @@ export async function scan(cfg: Config, gh: GitHubClient, opts: ScanOptions = {}
       skipComments ? Promise.resolve([]) : gh.comments(repo, i.number),
     ]);
     const body = i.body ?? "";
+    // Program rules are often in a linked terms document rather than in the issue itself.
+    const ruleDocs = enrich ? linkedRuleDocs(body) : [];
+    const rules = (await Promise.all(ruleDocs.map((d) => gh.rawFile(d.repo, d.path)))).join("\n");
     return {
       url: i.html_url,
       repo,
@@ -65,7 +68,7 @@ export async function scan(cfg: Config, gh: GitHubClient, opts: ScanOptions = {}
       openClaims: countClaims(comments),
       repoInfo,
       scamSignals: scamSignals(comments),
-      eligibility: eligibilitySignals(`${i.title}\n${body}`, comments),
+      eligibility: eligibilitySignals(`${i.title}\n${body}\n${rules}`, comments),
       repoBountyCount: perRepo.get(repo) ?? 1,
     } satisfies Bounty;
   });

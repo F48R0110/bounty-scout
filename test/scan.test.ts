@@ -21,6 +21,7 @@ describe("scan", () => {
     const fake = {
       searchIssues: async () => [issue(1, "acme/app", ["💎 Bounty"]), issue(2, "acme/app", ["💰 Rewarded"])],
       repo: async () => ({ full_name: "acme/app", language: "TypeScript", stargazers_count: 1200 }),
+      rawFile: async () => "",
       comments: async () => [
         { user: { login: "algora-pbc" }, body: "## 💎 $400 bounty • Acme", created_at: "" },
         { user: { login: "dev1" }, body: "/attempt #1", created_at: "" },

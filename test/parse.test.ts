@@ -78,3 +78,11 @@ describe("plain-language attempts and eligibility", () => {
     expect(eligibilitySignals("Fix the bug", [])).toEqual([]);
   });
 });
+
+describe("linkedRuleDocs", () => {
+  it("finds terms documents linked from the issue", async () => {
+    const { linkedRuleDocs } = await import("../src/parse.js");
+    const body = "Read the [terms](https://github.com/HHS/simpler-grants-gov/blob/main/documentation/bounties/paid-contributor-TOS.md) and the [design](https://github.com/x/y/blob/main/docs/design.md).";
+    expect(linkedRuleDocs(body)).toEqual([{ repo: "HHS/simpler-grants-gov", path: "documentation/bounties/paid-contributor-TOS.md" }]);
+  });
+});

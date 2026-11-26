@@ -70,6 +70,23 @@ export class GitHubClient {
     return p;
   }
 
+  private fileCache = new Map<string, Promise<string>>();
+
+  /** Raw text of a file in a repo (default branch), cached. Empty string if unavailable. */
+  rawFile(fullName: string, path: string): Promise<string> {
+    const key = `${fullName}:${path}`;
+    let p = this.fileCache.get(key);
+    if (!p) {
+      p = this.request<{ content?: string; encoding?: string }>(
+        `/repos/${fullName}/contents/${path.split("/").map(encodeURIComponent).join("/")}`,
+      )
+        .then((f) => (f.content && f.encoding === "base64" ? Buffer.from(f.content, "base64").toString("utf8") : ""))
+        .catch(() => "");
+      this.fileCache.set(key, p);
+    }
+    return p;
+  }
+
   issue(fullName: string, number: number): Promise<GhIssue> {
     return this.request<GhIssue>(`/repos/${fullName}/issues/${number}`);
   }
