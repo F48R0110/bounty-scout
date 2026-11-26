@@ -1,6 +1,6 @@
 import type { Bounty, Config, GhIssue } from "./types.js";
 import { GitHubClient, mapLimit, repoFromApiUrl } from "./github.js";
-import { countAttempts, countClaims, parseAmount, scamSignals } from "./parse.js";
+import { countAttempts, countClaims, eligibilitySignals, parseAmount, scamSignals } from "./parse.js";
 
 export interface ScanOptions {
   log?: (msg: string) => void;
@@ -65,6 +65,7 @@ export async function scan(cfg: Config, gh: GitHubClient, opts: ScanOptions = {}
       openClaims: countClaims(comments),
       repoInfo,
       scamSignals: scamSignals(comments),
+      eligibility: eligibilitySignals(`${i.title}\n${body}`, comments),
       repoBountyCount: perRepo.get(repo) ?? 1,
     } satisfies Bounty;
   });

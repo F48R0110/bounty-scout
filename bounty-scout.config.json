@@ -36,6 +36,10 @@
   "requireAmount": true,
   "minStars": 50,
   "maxAttempts": 3,
+  "ineligibleFor": [
+    "US citizens",
+    "US residents"
+  ],
   "maxPerRepo": 2,
   "excludeLabels": [
     "💰 Rewarded",

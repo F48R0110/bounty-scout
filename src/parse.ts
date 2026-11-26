@@ -77,13 +77,30 @@ export function scamSignals(comments: GhComment[]): string[] {
   return [...found];
 }
 
-/** Distinct people who announced they are working on it ("/attempt #123"). */
+const PLAIN_ATTEMPT =
+  /\b(i'?d like to (pick|take|work on)|i('| wi)ll (pick|take|work on)|i('| a)m (working|picking) (on|this)|can i (work on|take|pick)|(please )?assign (this|it) to me|i have (submitted|opened) a pull request)\b/i;
+
+/** Distinct people who announced they are working on it ("/attempt #123" or in plain words). */
 export function countAttempts(comments: GhComment[]): number {
   const users = new Set<string>();
   for (const c of comments) {
-    if (/^\s*\/attempt\b/im.test(c.body ?? "")) users.add(c.user?.login ?? "?");
+    if (isBountyBot(c)) continue;
+    const body = c.body ?? "";
+    if (/^\s*\/attempt\b/im.test(body) || PLAIN_ATTEMPT.test(body)) users.add(c.user?.login ?? "?");
   }
   return users.size;
+}
+
+const ELIGIBILITY: [RegExp, string][] = [
+  [/\bU\.?S\.? citizens?\b|citizens? of the United States/i, "payout limited to US citizens"],
+  [/\b(US|U\.S\.|United States) (residents?|persons?) only\b|must (reside|be located) in the (US|U\.S\.|United States)/i, "payout limited to US residents"],
+  [/\b(KYC|identity verification) (is )?required\b/i, "identity verification required to get paid"],
+];
+
+/** Who can actually get paid — restrictions hidden in the issue or the thread. */
+export function eligibilitySignals(body: string, comments: GhComment[]): string[] {
+  const text = [body, ...comments.map((c) => c.body ?? "")].join("\n");
+  return ELIGIBILITY.filter(([re]) => re.test(text)).map(([, label]) => label);
 }
 
 /** Pull requests already submitted to claim the bounty. */

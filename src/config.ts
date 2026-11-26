@@ -11,6 +11,7 @@ export const DEFAULT_CONFIG: Config = {
   requireAmount: false,
   minStars: 50,
   maxAttempts: 3,
+  ineligibleFor: [],
   maxPerRepo: 2,
   excludeLabels: ["💰 Rewarded", "rewarded", "on-hold"],
   redFlagKeywords: ["autonomous agents only", "airdrop"],

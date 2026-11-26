@@ -65,3 +65,16 @@ describe("scamSignals", () => {
     expect(scamSignals([c("/attempt #1"), c("💎 $5 bounty — pay attention to the tests", "algora-pbc")])).toEqual([]);
   });
 });
+
+describe("plain-language attempts and eligibility", () => {
+  it("counts people who claim the issue in words", () => {
+    expect(countAttempts([c("I'd like to pick this up. I'll post a PR soon", "rose"), c("thanks!", "maintainer")])).toBe(1);
+  });
+  it("finds payout restrictions in the issue or thread", async () => {
+    const { eligibilitySignals } = await import("../src/parse.js");
+    expect(eligibilitySignals("## Bounty: $150", [c("I confirm I am 18 or older, a US citizen, and not an HHS employee")])).toEqual([
+      "payout limited to US citizens",
+    ]);
+    expect(eligibilitySignals("Fix the bug", [])).toEqual([]);
+  });
+});

@@ -11,6 +11,10 @@ export function exclusionReason(b: Bounty, cfg: Config): string | null {
   if (hit) return `label "${hit}"`;
   if (b.repoInfo?.archived) return "repository archived";
   if (b.assigned) return "already assigned";
+  const blocked = (b.eligibility ?? []).find((e) =>
+    cfg.ineligibleFor.some((x) => e.toLowerCase().includes(x.toLowerCase())),
+  );
+  if (blocked) return blocked;
   if (b.attempts > cfg.maxAttempts) return `${b.attempts} people already attempting`;
   if (b.amountUsd !== null && b.amountUsd < cfg.minAmountUsd) return `below $${cfg.minAmountUsd}`;
   if (cfg.requireAmount && b.amountUsd === null) return "no amount stated";
@@ -40,6 +44,7 @@ export function redFlags(b: Bounty, cfg: Config): string[] {
   }
   if (b.repoInfo && daysBetween(b.repoInfo.created_at) < 30) flags.push("repo created < 30 days ago");
   for (const s of b.scamSignals ?? []) flags.push(`scam warning in comments: ${s}`);
+  for (const e of b.eligibility ?? []) flags.push(e);
   return flags;
 }
 

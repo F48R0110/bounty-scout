@@ -17,6 +17,8 @@ export interface Config {
   requireAmount: boolean;
   minStars: number;
   maxAttempts: number;
+  /** Restrictions you cannot meet: matching bounties are excluded (e.g. "US citizens"). */
+  ineligibleFor: string[];
   maxPerRepo: number;
   excludeLabels: string[];
   redFlagKeywords: string[];
@@ -78,6 +80,8 @@ export interface Bounty {
   repoInfo: GhRepo | null;
   /** Scam patterns found in comments from people other than the bounty bot. */
   scamSignals: string[];
+  /** Restrictions on who can be paid (e.g. US citizens only). */
+  eligibility: string[];
   /** How many bounty issues this repo has in the current scan (spam-farm signal). */
   repoBountyCount: number;
 }

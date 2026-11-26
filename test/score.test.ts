@@ -39,11 +39,17 @@ const bounty = (over: Partial<Bounty> = {}): Bounty => ({
   repoInfo: repo(5000),
   repoBountyCount: 1,
   scamSignals: [],
+  eligibility: [],
   ...over,
 });
 
 describe("exclusionReason", () => {
   it("keeps a healthy bounty", () => expect(exclusionReason(bounty(), cfg)).toBeNull());
+  it("drops bounties you cannot be paid for", () => {
+    const b = bounty({ eligibility: ["payout limited to US citizens"] });
+    expect(exclusionReason(b, { ...cfg, ineligibleFor: ["US citizens"] })).toMatch(/US citizens/);
+    expect(exclusionReason(b, cfg)).toBeNull();
+  });
   it("drops rewarded, assigned, crowded, tiny and archived", () => {
     expect(exclusionReason(bounty({ labels: ["💰 Rewarded"] }), cfg)).toMatch(/Rewarded/);
     expect(exclusionReason(bounty({ assigned: true }), cfg)).toMatch(/assigned/);
