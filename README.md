@@ -42,7 +42,7 @@ The shortlist keeps at most two bounties per repo, so one noisy project can't fi
 git clone https://github.com/<you>/bounty-scout && cd bounty-scout
 npm install && npm run build && npm link
 
-export GITHUB_TOKEN=ghp_...      # any token, no scopes needed; raises API limits
+echo GITHUB_TOKEN=ghp_... > .env  # any token, no scopes needed; raises API limits (.env is gitignored)
 bounty-scout scan                # → out/index.html, out/report.md, out/bounties.json
 bounty-scout scan --fast         # search only (3 API calls), rougher ranking
 ```
@@ -74,7 +74,9 @@ Drafting stays local on purpose: it's the step that needs your judgement.
 
 ## What I learned building it
 
-Searching GitHub for bounty labels returns hundreds of issues. In the first scan of 288 issues, 32 were already rewarded or assigned. The top of the raw list was dominated by a few repos posting dozens of identical “$780” bounties, crypto “bounty hunter” boards, and repos created only to host bounties. Without the trust signals and the per-repo cap, the shortlist was mostly noise. The ranking is the product.
+Searching GitHub for bounty labels returns hundreds of issues. In the first scan of 288 issues, 32 were already rewarded or assigned. The top of the raw list was dominated by a few repos posting dozens of identical “$780” bounties, crypto “bounty hunter” boards, and repos created only to host bounties. Without the trust signals and the per-repo cap, the shortlist was mostly noise.
+
+The well-known bounties are the opposite problem: they are crowded. On the first enriched run, popular Algora bounties had 12, 20, 39, 52 and even 58 different people posting `/attempt`. Reading the comment thread before picking a bounty is not optional, so the tool does it for you. The ranking is the product.
 
 ## Roadmap
 

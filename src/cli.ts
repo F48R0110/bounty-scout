@@ -6,6 +6,10 @@ import { scan } from "./scan.js";
 import { rank } from "./score.js";
 import { markNew, writeReports } from "./report.js";
 import { draft } from "./draft.js";
+import { existsSync } from "node:fs";
+
+// Load GITHUB_TOKEN and friends from a local .env file (gitignored), if present.
+if (existsSync(".env")) process.loadEnvFile(".env");
 
 const HELP = `bounty-scout — find open-source bounties worth your time
 
