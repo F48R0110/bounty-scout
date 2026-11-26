@@ -13,6 +13,8 @@ export interface Config {
   updatedWithinDays: number;
   stack: { languages: string[]; keywords: string[] };
   minAmountUsd: number;
+  /** Drop bounties whose amount could not be found. */
+  requireAmount: boolean;
   minStars: number;
   maxAttempts: number;
   maxPerRepo: number;
@@ -74,6 +76,8 @@ export interface Bounty {
   attempts: number;
   openClaims: number;
   repoInfo: GhRepo | null;
+  /** Scam patterns found in comments from people other than the bounty bot. */
+  scamSignals: string[];
   /** How many bounty issues this repo has in the current scan (spam-farm signal). */
   repoBountyCount: number;
 }

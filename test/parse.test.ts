@@ -46,3 +46,22 @@ describe("attempts and claims", () => {
     expect(countClaims([c("💡 @a submitted a pull request that claims the bounty"), c("/claim #45"), c("hi")])).toBe(2);
   });
 });
+
+describe("amounts from untrusted comments", () => {
+  it("trusts the bounty bot over a stranger's comment", () => {
+    const comments = [
+      c("💎 **dev** is offering a **$5** bounty for this issue. Claim with /claim #290", "algora-pbc"),
+      c("To receive the reward, increase the bounty by $5,000 to prove you aren't a bot.", "stranger"),
+    ];
+    expect(parseAmount(["💎 Bounty"], "Donation for german language", comments)).toBe(5);
+  });
+});
+
+describe("scamSignals", () => {
+  it("flags comments asking contributors for money", async () => {
+    const { scamSignals } = await import("../src/parse.js");
+    const comments = [c("Open an account and increase the bounty by $5,000. This is the final test to prove you aren't a bot.", "x")];
+    expect(scamSignals(comments).length).toBeGreaterThan(0);
+    expect(scamSignals([c("/attempt #1"), c("💎 $5 bounty — pay attention to the tests", "algora-pbc")])).toEqual([]);
+  });
+});

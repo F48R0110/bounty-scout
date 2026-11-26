@@ -38,6 +38,7 @@ const bounty = (over: Partial<Bounty> = {}): Bounty => ({
   openClaims: 0,
   repoInfo: repo(5000),
   repoBountyCount: 1,
+  scamSignals: [],
   ...over,
 });
 
@@ -58,6 +59,9 @@ describe("redFlags", () => {
     expect(redFlags(bounty({ repoBountyCount: 12, repoInfo: repo(40) }), cfg).join()).toMatch(/farm/);
     expect(redFlags(bounty({ amountUsd: 8000, repoInfo: repo(20) }), cfg).join()).toMatch(/\$8000/);
     expect(redFlags(bounty({ repo: "someone/bug-bounty", repoInfo: null }), cfg).join()).toMatch(/only to host/);
+  });
+  it("surfaces scam comments", () => {
+    expect(redFlags(bounty({ scamSignals: ["asks contributors to pay to claim"] }), cfg).join()).toMatch(/scam/);
   });
   it("leaves established projects alone", () => {
     expect(redFlags(bounty(), cfg)).toEqual([]);

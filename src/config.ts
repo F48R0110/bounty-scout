@@ -8,6 +8,7 @@ export const DEFAULT_CONFIG: Config = {
   updatedWithinDays: 90,
   stack: { languages: ["TypeScript", "JavaScript"], keywords: ["react", "node"] },
   minAmountUsd: 50,
+  requireAmount: false,
   minStars: 50,
   maxAttempts: 3,
   maxPerRepo: 2,

@@ -25,7 +25,7 @@ Paid bounties on GitHub (Algora, IssueHunt-style labels, maintainers posting “
 | Freshness | Recent activity on the issue | 8 |
 | Clarity | Description length, acceptance criteria, repro steps | 7 |
 
-**Hard filters** drop bounties that are rewarded, on hold, assigned, below your minimum, on archived or tiny repos, or with too many people attempting.
+**Hard filters** drop bounties that are rewarded, on hold, assigned, below your minimum, without a stated amount (`requireAmount`), on archived or tiny repos, or with too many people attempting.
 
 **Red flags** don't hide a bounty but cut its score and show a warning:
 - one small repo publishing many bounties at once (bounty farm)
@@ -33,6 +33,7 @@ Paid bounties on GitHub (Algora, IssueHunt-style labels, maintainers posting “
 - a large reward on a repo with almost no stars
 - a repo created in the last 30 days
 - keywords from your blocklist (e.g. “autonomous agents only”, “airdrop”)
+- **scam comments**: someone asking contributors to pay, “top up the bounty” or “prove you're not a bot” before they can claim
 
 The shortlist keeps at most two bounties per repo, so one noisy project can't fill it.
 
@@ -75,6 +76,8 @@ Drafting stays local on purpose: it's the step that needs your judgement.
 ## What I learned building it
 
 Searching GitHub for bounty labels returns hundreds of issues. In the first scan of 288 issues, 32 were already rewarded or assigned. The top of the raw list was dominated by a few repos posting dozens of identical “$780” bounties, crypto “bounty hunter” boards, and repos created only to host bounties. Without the trust signals and the per-repo cap, the shortlist was mostly noise.
+
+Amounts lie too. One issue looked like a $5,000 bounty; the real bounty, posted by the Algora bot, was $5. The $5,000 came from a comment asking contributors to *pay* $5,000 to “prove they aren't a bot” before claiming. So amounts are now taken from bounty bots and maintainers first, and comments like that raise a scam warning.
 
 The well-known bounties are the opposite problem: they are crowded. On the first enriched run, popular Algora bounties had 12, 20, 39, 52 and even 58 different people posting `/attempt`. Reading the comment thread before picking a bounty is not optional, so the tool does it for you. The ranking is the product.
 

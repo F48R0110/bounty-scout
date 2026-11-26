@@ -7,15 +7,53 @@
   "maxIssuesPerQuery": 100,
   "updatedWithinDays": 90,
   "stack": {
-    "languages": ["TypeScript", "JavaScript", "PHP", "Vue", "HTML", "CSS"],
-    "keywords": ["react", "next.js", "nextjs", "vue", "angular", "wordpress", "woocommerce", "shopify", "node", "frontend", "ui", "css", "pwa"]
+    "languages": [
+      "TypeScript",
+      "JavaScript",
+      "PHP",
+      "Vue",
+      "HTML",
+      "CSS"
+    ],
+    "keywords": [
+      "react",
+      "next.js",
+      "nextjs",
+      "vue",
+      "angular",
+      "wordpress",
+      "woocommerce",
+      "shopify",
+      "node",
+      "frontend",
+      "ui",
+      "css",
+      "pwa"
+    ]
   },
   "minAmountUsd": 50,
+  "requireAmount": true,
   "minStars": 50,
   "maxAttempts": 3,
   "maxPerRepo": 2,
-  "excludeLabels": ["💰 Rewarded", "rewarded", "on-hold", "on hold", "wontfix", "duplicate", "invalid"],
-  "redFlagKeywords": ["autonomous agents only", "crypto-eligible", "airdrop", "token sale", "pay to apply", "deposit", "ai agent friendly"],
+  "excludeLabels": [
+    "💰 Rewarded",
+    "rewarded",
+    "on-hold",
+    "on hold",
+    "wontfix",
+    "duplicate",
+    "invalid"
+  ],
+  "redFlagKeywords": [
+    "autonomous agents only",
+    "crypto-eligible",
+    "airdrop",
+    "token sale",
+    "pay to apply",
+    "deposit",
+    "ai agent friendly"
+  ],
   "weights": {
     "amount": 25,
     "stack": 25,

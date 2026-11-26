@@ -39,12 +39,42 @@ export function parseAmount(labels: string[], body: string, comments: GhComment[
   const fromLabels = labels.flatMap((l) => (/^\s*\$/.test(l) ? moneyValues(l) : []));
   if (fromLabels.length) return Math.max(...fromLabels);
 
-  const fromComments = comments.flatMap((c) => bountyAmountsInText(c.body ?? ""));
-  if (fromComments.length) return Math.max(...fromComments);
+  // Bounty platforms announce the real amount through their bot account.
+  const fromBots = comments.filter(isBountyBot).flatMap((c) => bountyAmountsInText(c.body ?? ""));
+  if (fromBots.length) return Math.max(...fromBots);
 
+  // The issue itself (title + body) is written by the maintainer or sponsor.
   const fromBody = bountyAmountsInText(body);
   if (fromBody.length) return Math.max(...fromBody);
+
+  // Other people's comments are the least trustworthy source: anyone can write "$5,000".
+  const fromComments = comments.flatMap((c) => bountyAmountsInText(c.body ?? ""));
+  if (fromComments.length) return Math.min(...fromComments);
   return null;
+}
+
+const BOT_LOGINS = new Set(["algora-pbc", "algora-pbc[bot]", "opire-bot", "opirebot", "issuehunt-app[bot]", "boss-bot"]);
+
+export function isBountyBot(c: GhComment): boolean {
+  const login = (c.user?.login ?? "").toLowerCase();
+  return BOT_LOGINS.has(login) || (login.endsWith("[bot]") && /bount|algora|opire/.test(login));
+}
+
+const SCAM_PATTERNS: [RegExp, string][] = [
+  [/(increase|top up|fund) the bounty by \$?\d/i, "asks contributors to pay to claim"],
+  [/(pay|send|deposit) (a |the )?(fee|deposit|\$\d)/i, "asks for a payment"],
+  [/prove you('| a)re not a bot/i, "fake 'prove you are human' step"],
+  [/(dm|telegram|whatsapp) me (to|for) (claim|get) (the )?(reward|bounty)/i, "moves the claim to private chat"],
+];
+
+/** Comments that try to get money out of contributors — a classic bounty scam. */
+export function scamSignals(comments: GhComment[]): string[] {
+  const found = new Set<string>();
+  for (const c of comments) {
+    if (isBountyBot(c)) continue;
+    for (const [re, label] of SCAM_PATTERNS) if (re.test(c.body ?? "")) found.add(label);
+  }
+  return [...found];
 }
 
 /** Distinct people who announced they are working on it ("/attempt #123"). */

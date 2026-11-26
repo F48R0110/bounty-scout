@@ -13,6 +13,7 @@ export function exclusionReason(b: Bounty, cfg: Config): string | null {
   if (b.assigned) return "already assigned";
   if (b.attempts > cfg.maxAttempts) return `${b.attempts} people already attempting`;
   if (b.amountUsd !== null && b.amountUsd < cfg.minAmountUsd) return `below $${cfg.minAmountUsd}`;
+  if (cfg.requireAmount && b.amountUsd === null) return "no amount stated";
   if (b.repoInfo && b.repoInfo.stargazers_count < cfg.minStars) {
     return `repo has ${b.repoInfo.stargazers_count}★ (< ${cfg.minStars})`;
   }
@@ -38,6 +39,7 @@ export function redFlags(b: Bounty, cfg: Config): string[] {
     flags.push("repo exists only to host bounties");
   }
   if (b.repoInfo && daysBetween(b.repoInfo.created_at) < 30) flags.push("repo created < 30 days ago");
+  for (const s of b.scamSignals ?? []) flags.push(`scam warning in comments: ${s}`);
   return flags;
 }
 
@@ -107,6 +109,7 @@ export function scoreBounty(b: Bounty, cfg: Config): ScoredBounty {
     clarity * w.clarity;
   let score = (raw / totalWeight) * 100;
   if (flags.length) score *= 0.6; // flagged bounties sink below clean ones
+  if (b.amountUsd === null) score *= 0.75; // "maybe there's money" is worth less than a stated amount
 
   return {
     ...b,
