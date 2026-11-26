@@ -2,6 +2,7 @@
   "queries": [
     "label:\"💎 Bounty\" state:open is:issue",
     "label:bounty state:open is:issue",
+    "label:\"status: open bounty\" state:open is:issue",
     "\"/bounty\" state:open is:issue in:comments"
   ],
   "maxIssuesPerQuery": 100,
