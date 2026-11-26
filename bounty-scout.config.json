@@ -1,0 +1,37 @@
+{
+  "queries": [
+    "label:\"💎 Bounty\" state:open is:issue",
+    "label:bounty state:open is:issue",
+    "\"/bounty\" state:open is:issue in:comments"
+  ],
+  "maxIssuesPerQuery": 100,
+  "updatedWithinDays": 90,
+  "stack": {
+    "languages": ["TypeScript", "JavaScript", "PHP", "Vue", "HTML", "CSS"],
+    "keywords": ["react", "next.js", "nextjs", "vue", "angular", "wordpress", "woocommerce", "shopify", "node", "frontend", "ui", "css", "pwa"]
+  },
+  "minAmountUsd": 50,
+  "minStars": 50,
+  "maxAttempts": 3,
+  "maxPerRepo": 2,
+  "excludeLabels": ["💰 Rewarded", "rewarded", "on-hold", "on hold", "wontfix", "duplicate", "invalid"],
+  "redFlagKeywords": ["autonomous agents only", "crypto-eligible", "airdrop", "token sale", "pay to apply", "deposit", "ai agent friendly"],
+  "weights": {
+    "amount": 25,
+    "stack": 25,
+    "competition": 20,
+    "trust": 15,
+    "freshness": 8,
+    "clarity": 7
+  },
+  "report": {
+    "top": 25,
+    "outDir": "out"
+  },
+  "draft": {
+    "workDir": ".bounty-scout/work",
+    "outDir": "out/drafts",
+    "allowShell": false,
+    "extraClaudeArgs": []
+  }
+}

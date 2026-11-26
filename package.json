@@ -1,0 +1,36 @@
+{
+  "name": "bounty-scout",
+  "version": "0.1.0",
+  "description": "Human-in-the-loop agent that finds open-source bounties worth your time, ranks them, and drafts fixes for you to review.",
+  "type": "module",
+  "bin": {
+    "bounty-scout": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "scan": "node dist/cli.js scan",
+    "draft": "node dist/cli.js draft",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "bounty",
+    "open-source",
+    "algora",
+    "github",
+    "ai-agent",
+    "claude-code"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,47 @@
+name: Weekly bounty scan
+
+on:
+  schedule:
+    - cron: "17 7 * * 4" # Thursdays 07:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: scout
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Scan and rank bounties
+        run: node dist/cli.js scan --out out
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remember what we have already seen
+        run: |
+          git config user.name "bounty-scout[bot]"
+          git config user.email "bounty-scout@users.noreply.github.com"
+          git add data/seen.json
+          git diff --cached --quiet || git commit -m "chore: update seen bounties"
+          git push
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+      - id: deploy
+        uses: actions/deploy-pages@v4
